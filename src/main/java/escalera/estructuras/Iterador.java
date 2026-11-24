@@ -1,4 +1,4 @@
-package main.java.escalera.estructuras;
+package escalera.estructuras;
 
 /**
  * Iterador propio para recorrer nuestras estructuras sin depender de

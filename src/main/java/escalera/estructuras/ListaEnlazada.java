@@ -1,4 +1,4 @@
-package main.java.escalera.estructuras;
+package escalera.estructuras;
 
 /**
  * Lista simplemente enlazada con referencia a la cabeza y al último nodo.

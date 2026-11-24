@@ -1,4 +1,4 @@
-package main.java.escalera.modelo;
+package escalera.modelo;
 
 /**
  * Casilla del tablero (inmutable). Se crea con los métodos fábrica,
