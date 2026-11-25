@@ -1,0 +1,39 @@
+# Banco de preguntas del Juego Escalera
+# Formato: dificultad;categoria;enunciado;opcionA;opcionB;opcionC;opcionD;letraCorrecta
+# Dificultad: 1 = fácil, 2 = media, 3 = difícil. Las líneas que empiezan con '#' se ignoran.
+
+# ---------------- Nivel 1 ----------------
+1;Cultura;¿Cuál es la capital de Colombia?;Medellín;Bogotá;Cali;Popayán;B
+1;Cultura;¿Cuántos días tiene una semana?;5;6;7;8;C
+1;Ciencia;¿Qué planeta es conocido como el planeta rojo?;Venus;Marte;Júpiter;Mercurio;B
+1;Matemáticas;¿Cuánto es 7 x 8?;54;56;63;48;B
+1;Programación;¿Qué significa la sigla POO?;Programación Orientada a Objetos;Procesamiento Operativo Online;Programa Optimizado Obligatorio;Protocolo de Objetos Organizados;A
+1;Cultura;¿Cuál es el océano más grande del mundo?;Atlántico;Índico;Pacífico;Ártico;C
+1;Programación;En Java, ¿qué tipo de dato se usa para guardar números enteros?;String;int;boolean;double;B
+1;Matemáticas;¿Cuántos lados tiene un hexágono?;5;6;7;8;B
+1;Ciencia;¿Qué gas necesitamos respirar para vivir?;Nitrógeno;Dióxido de carbono;Oxígeno;Helio;C
+1;Arte;¿Quién pintó la Mona Lisa?;Van Gogh;Picasso;Leonardo da Vinci;Dalí;C
+
+# ---------------- Nivel 2 ----------------
+2;Estructuras de datos;¿Qué estructura sigue la regla "el último en entrar es el primero en salir"?;Cola;Pila;Árbol;Grafo;B
+2;Estructuras de datos;¿Qué estructura sigue la regla FIFO (primero en entrar, primero en salir)?;Pila;Cola;Árbol binario;Tabla hash;B
+2;Programación;¿Qué pilar de la POO permite que una clase reutilice atributos y métodos de otra?;Herencia;Encapsulamiento;Sobrecarga;Iteración;A
+2;Estructuras de datos;¿Cuál es la complejidad de buscar un elemento en un árbol AVL con n elementos?;O(1);O(log n);O(n);O(n^2);B
+2;Matemáticas;¿Cuánto es 2 elevado a la 10?;512;1000;1024;2048;C
+2;Programación;¿Qué palabra clave de Java se usa para crear un objeto?;this;new;static;void;B
+2;Historia;¿En qué año llegó el ser humano a la Luna por primera vez?;1965;1969;1972;1959;B
+2;Ciencia;¿Qué elemento químico tiene el símbolo Fe?;Flúor;Hierro;Fósforo;Francio;B
+2;Bases de datos;¿Qué es una clave primaria en una base de datos relacional?;Un campo que puede repetirse en toda la tabla;Un campo que identifica de forma única cada registro;Una copia de seguridad de la tabla;Una contraseña de acceso;B
+2;Geografía;¿Cuál es el río más largo de Colombia?;Cauca;Magdalena;Atrato;Putumayo;B
+
+# ---------------- Nivel 3 ----------------
+3;Estructuras de datos;¿Cuál es el peor caso de insertar en un árbol binario de búsqueda sin balanceo?;O(log n);O(n);O(1);O(n log n);B
+3;Estructuras de datos;¿Qué recorrido de un árbol binario de búsqueda entrega las claves de menor a mayor?;Preorden;Inorden;Postorden;Por niveles;B
+3;Grafos;¿Qué algoritmo recorre un grafo visitando primero todos los vecinos de un nodo (por niveles)?;DFS;BFS;Búsqueda binaria;Quicksort;B
+3;Estructuras de datos;En una tabla hash, ¿cómo se llama que dos claves distintas produzcan el mismo índice?;Colisión;Desbordamiento;Rotación;Recursión;A
+3;Estructuras de datos;¿Qué rotación corrige un árbol AVL desbalanceado en el caso izquierda-izquierda?;Rotación simple a la derecha;Rotación simple a la izquierda;Doble rotación izquierda-derecha;Ninguna;A
+3;Clean Code;¿Qué principio SOLID dice que una clase debe tener una única razón para cambiar?;Abierto/Cerrado;Responsabilidad única;Sustitución de Liskov;Inversión de dependencias;B
+3;Geografía;¿Cuál es la capital de Australia?;Sídney;Melbourne;Canberra;Perth;C
+3;Ciencia;¿Quién formuló las tres leyes del movimiento?;Einstein;Newton;Galileo;Kepler;B
+3;Grafos;¿Qué recorrido permite detectar ciclos en un grafo dirigido usando los estados no visitado, en proceso y terminado?;DFS;BFS;Búsqueda binaria;Heap sort;A
+3;Grafos;¿Cuántas aristas tiene un árbol con n nodos?;n;n - 1;n + 1;2n;B
