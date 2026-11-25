@@ -125,6 +125,24 @@ public class JuegoService {
         return orden;
     }
 
+    /** @return la tabla de posiciones actual (foto de aciertos y fallos en este momento) */
+    public Ranking ranking() {
+        return new Ranking(orden);
+    }
+
+    /** Muestra en pantalla la tabla de posiciones, del primer al último puesto. */
+    public void mostrarRanking() {
+        vista.mostrar("--- Tabla de posiciones ---");
+        Iterador<Jugador> it = ranking().posiciones().iterador();
+        int puesto = 1;
+        while (it.tieneSiguiente()) {
+            Jugador jugador = it.siguiente();
+            vista.mostrar(puesto + ". " + jugador.getNombre() + " - aciertos: "
+                    + jugador.getAciertos() + ", fallos: " + jugador.getFallos());
+            puesto++;
+        }
+    }
+
     /** @return las últimas 5 jugadas, de la más reciente a la más antigua */
     public ListaEnlazada<Movimiento> ultimosMovimientos() {
         return historial.ultimos(ULTIMAS_JUGADAS);

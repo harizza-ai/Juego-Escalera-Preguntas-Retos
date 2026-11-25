@@ -1,9 +1,6 @@
 package escalera.app;
 
-import escalera.estructuras.Iterador;
-import escalera.estructuras.ListaEnlazada;
 import escalera.modelo.Dado;
-import escalera.modelo.Jugador;
 import escalera.modelo.Pregunta;
 import escalera.modelo.Tablero;
 import escalera.servicio.BancoPreguntas;
@@ -50,7 +47,7 @@ public class Main {
         vista.mostrar("¡Hasta pronto!");
     }
 
-    /** Prepara una partida (preguntas, jugadores), la juega y muestra el resumen. */
+    /** Prepara una partida (preguntas, jugadores), la juega y muestra el ranking. */
     private static void jugarPartida(Vista vista) {
         Random azar = new Random();
         BancoPreguntas banco = new BancoPreguntas(azar);
@@ -96,16 +93,10 @@ public class Main {
         }
     }
 
-    /** Aciertos y fallos de cada jugador, y las últimas jugadas. */
+    /** Tabla de posiciones (ranking) y las últimas jugadas. */
     private static void mostrarResumen(Vista vista, JuegoService juego) {
-        vista.mostrar("\n--- Resumen de la partida ---");
-        ListaEnlazada<Jugador> jugadores = juego.getJugadores();
-        Iterador<Jugador> it = jugadores.iterador();
-        while (it.tieneSiguiente()) {
-            Jugador jugador = it.siguiente();
-            vista.mostrar(jugador.getNombre() + " - aciertos: " + jugador.getAciertos()
-                    + ", fallos: " + jugador.getFallos());
-        }
+        vista.mostrar("\n--- Fin de la partida ---");
+        juego.mostrarRanking();
         juego.mostrarHistorial();
     }
 
