@@ -118,7 +118,7 @@ public final class Pregunta {
 
     private static void validarTexto(String texto, String descripcion) {
         if (texto == null || texto.trim().isEmpty()) {
-            throw new IllegalArgumentException(descripcion + " no puede estar vacío");
+            throw new IllegalArgumentException(descripcion + " no puede estar en blanco");
         }
     }
 }

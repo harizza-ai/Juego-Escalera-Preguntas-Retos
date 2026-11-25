@@ -1,13 +1,16 @@
 package escalera.app;
 
+import escalera.estructuras.Iterador;
 import escalera.modelo.Dado;
 import escalera.modelo.Pregunta;
 import escalera.modelo.Tablero;
 import escalera.servicio.BancoPreguntas;
+import escalera.servicio.CargadorPreguntas;
 import escalera.servicio.JuegoService;
 import escalera.vista.Vista;
 import escalera.vista.VistaConsola;
 
+import java.io.IOException;
 import java.util.Random;
 
 /** Punto de entrada: menú principal del Juego Escalera + Preguntas/Retos. */
@@ -16,6 +19,7 @@ public class Main {
     private static final String OPCION_JUGAR = "1";
     private static final String OPCION_DEMO = "2";
     private static final String OPCION_SALIR = "3";
+    private static final String ARCHIVO_PREGUNTAS = "preguntas.txt";
 
     public static void main(String[] args) {
         Vista vista = new VistaConsola();
@@ -51,7 +55,7 @@ public class Main {
     private static void jugarPartida(Vista vista) {
         Random azar = new Random();
         BancoPreguntas banco = new BancoPreguntas(azar);
-        cargarPreguntasDeEjemplo(banco);
+        cargarPreguntas(vista, banco);
 
         JuegoService juego = new JuegoService(Tablero.crearEstandar(), banco, new Dado(azar), vista);
         registrarJugadores(vista, juego);
@@ -101,8 +105,34 @@ public class Main {
     }
 
     /**
-     * Preguntas de ejemplo (3 por nivel) para poder jugar en la Fase 2.
-     * En la Fase 3 se reemplaza por la lectura del archivo preguntas.txt.
+     * Carga las preguntas desde preguntas.txt. Si el archivo no se puede leer o no
+     * tiene ninguna pregunta válida, usa las de ejemplo para que el juego siga funcionando.
+     */
+    private static void cargarPreguntas(Vista vista, BancoPreguntas banco) {
+        CargadorPreguntas cargador = new CargadorPreguntas();
+        try {
+            int cargadas = cargador.cargar(ARCHIVO_PREGUNTAS, banco);
+            vista.mostrar("Preguntas cargadas desde " + ARCHIVO_PREGUNTAS + ": " + cargadas);
+            mostrarLineasInvalidas(vista, cargador);
+        } catch (IOException e) {
+            vista.mostrar("No se pudo leer " + ARCHIVO_PREGUNTAS
+                    + ". Revisa que exista junto al programa y esté guardado en UTF-8.");
+        }
+        if (banco.cantidad() == 0) {
+            vista.mostrar("Se usarán las preguntas de ejemplo.");
+            cargarPreguntasDeEjemplo(banco);
+        }
+    }
+
+    private static void mostrarLineasInvalidas(Vista vista, CargadorPreguntas cargador) {
+        Iterador<String> it = cargador.getLineasInvalidas().iterador();
+        while (it.tieneSiguiente()) {
+            vista.mostrar("  Se omitió -> " + it.siguiente());
+        }
+    }
+
+    /**
+     * Preguntas de ejemplo (3 por nivel), solo como respaldo si preguntas.txt no se puede leer.
      */
     private static void cargarPreguntasDeEjemplo(BancoPreguntas banco) {
         banco.agregar(crearPregunta(1, 1, "Cultura", "¿Cuál es la capital de Colombia?",
