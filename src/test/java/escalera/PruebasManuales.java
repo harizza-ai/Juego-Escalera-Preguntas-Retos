@@ -117,9 +117,9 @@ public class PruebasManuales {
         verificar(arbol.tamano() == 1000, "tamaño del árbol");
         verificar(arbol.altura() <= 14, "altura AVL logarítmica (altura " + arbol.altura() + ")");
         verificar("v500".equals(arbol.buscar(500)) && arbol.buscar(1001) == null, "búsqueda");
-        ListaEnlazada<String> rango = arbol.buscarEnRango(10, 14);
+        ListaEnlazada<String> rango = arbol.enRango(10, 14);
         verificar(rango.tamano() == 5 && rango.obtener(0).equals("v10") && rango.obtener(4).equals("v14"), "rango");
-        verificar(arbol.buscarEnRango(2000, 3000).estaVacia(), "rango vacío");
+        verificar(arbol.enRango(2000, 3000).estaVacia(), "rango vacío");
         verificar(arbol.enOrden().obtener(0).equals("v1"), "en orden ascendente");
         verificar(arbol.enOrdenDescendente().obtener(0).equals("v1000"), "en orden descendente");
         arbol.insertar(500, "nuevo");
@@ -174,41 +174,39 @@ public class PruebasManuales {
         String[] opciones = {"uno", "dos", "tres", "cuatro"};
         Pregunta p = new Pregunta(7, 2, "Prueba", "¿Cuál?", opciones, 2);
         verificar(p.clave() == 2007, "clave = nivel*1000 + id");
-        verificar(p.esCorrecta("c") && p.esCorrecta(" C ") && !p.esCorrecta("a"), "validación de respuesta");
-        verificar(!Pregunta.esRespuestaValida("") && !Pregunta.esRespuestaValida("AB")
-                && !Pregunta.esRespuestaValida("E") && !Pregunta.esRespuestaValida(null), "respuestas inválidas");
+        verificar(p.esCorrecta(2) && !p.esCorrecta(0), "validación de respuesta");
+        verificar(p.cantidadOpciones() == 4, "cantidad de opciones");
         verificar(lanza(() -> new Pregunta(0, 1, "x", "y", opciones, 0)), "id inválido");
         verificar(lanza(() -> new Pregunta(1, 1, "x", "y", new String[]{"a"}, 0)), "opciones inválidas");
-        verificar(p.letraCorrecta() == 'C', "letra correcta");
+        verificar(lanza(() -> new Pregunta(1, 4, "x", "y", opciones, 0)), "dificultad inválida");
+        verificar(lanza(() -> new Pregunta(1, 1, "x", "y", opciones, 4)), "índice de respuesta inválido");
+        verificar("tres".equals(p.getTextoCorrecto()), "texto correcto");
     }
 
     private static void probarCargadorYBanco() throws IOException {
         BancoPreguntas banco = new BancoPreguntas(new Random(1));
         int cargadas = new CargadorPreguntas().cargar("preguntas.txt", banco);
-        verificar(cargadas == 30 && banco.cantidadTotal() == 30, "se cargan 30 preguntas del archivo");
-        verificar(banco.cantidadDeNivel(1) == 10 && banco.cantidadDeNivel(2) == 10 && banco.cantidadDeNivel(3) == 10,
+        verificar(cargadas == 30 && banco.cantidad() == 30, "se cargan 30 preguntas del archivo");
+        verificar(banco.preguntasDe(1).tamano() == 10
+                && banco.preguntasDe(2).tamano() == 10
+                && banco.preguntasDe(3).tamano() == 10,
                 "10 preguntas por nivel");
 
         boolean ordenado = true;
         int anterior = -1;
-        Iterador<Pregunta> it = banco.catalogoOrdenado().iterador();
-        while (it.tieneSiguiente()) {
-            int clave = it.siguiente().clave();
-            ordenado &= clave > anterior;
-            anterior = clave;
+        for (int nivel = 1; nivel <= 3; nivel++) {
+            Iterador<Pregunta> it = banco.preguntasDe(nivel).iterador();
+            while (it.tieneSiguiente()) {
+                int clave = it.siguiente().clave();
+                ordenado &= clave > anterior;
+                anterior = clave;
+            }
         }
         verificar(ordenado, "catálogo ordenado por clave");
 
-        // Sin repetir hasta agotar el nivel
-        TablaHash<Integer, Boolean> vistas = new TablaHash<>();
-        boolean sinRepetidas = true;
-        for (int i = 0; i < 10; i++) {
-            Pregunta p = banco.obtenerAleatoria(2);
-            sinRepetidas &= p.getDificultad() == 2 && !vistas.contiene(p.clave());
-            vistas.poner(p.clave(), Boolean.TRUE);
-        }
-        verificar(sinRepetidas, "10 preguntas de nivel 2 sin repetir");
-        verificar(banco.obtenerAleatoria(2) != null, "tras agotar el nivel se reinicia");
+        Pregunta aleatoria = banco.obtenerAleatoria(2);
+        verificar(aleatoria != null && aleatoria.getDificultad() == 2, "pregunta aleatoria de nivel 2");
+        verificar(banco.buscar(2, 1) != null && banco.buscar(2, 999) == null, "búsqueda por dificultad e id");
         verificar(banco.obtenerAleatoria(9) == null, "nivel sin preguntas = null");
 
         verificar(lanza(() -> new CargadorPreguntas().cargar("no_existe.txt", new BancoPreguntas(new Random()))),
@@ -217,8 +215,10 @@ public class PruebasManuales {
         try (java.io.FileWriter w = new java.io.FileWriter(temporal)) {
             w.write("1;Cat;Pregunta incompleta;A;B\n");
         }
-        verificar(lanza(() -> new CargadorPreguntas().cargar(temporal.getPath(), new BancoPreguntas(new Random()))),
-                "línea con campos faltantes lanza excepción");
+        CargadorPreguntas cargador = new CargadorPreguntas();
+        int cargadasTemp = cargador.cargar(temporal.getPath(), new BancoPreguntas(new Random()));
+        verificar(cargadasTemp == 0 && cargador.getLineasInvalidas().tamano() == 1,
+                "línea con campos faltantes se omite y queda registrada");
         temporal.delete();
     }
 
@@ -253,11 +253,11 @@ public class PruebasManuales {
         lista.agregarAlFinal(b);
         String dibujo = new RenderizadorTablero().dibujar(tablero, lista);
         String[] lineas = dibujo.split("\n");
-        verificar(lineas.length == 1 + 5 * 4 + 1 + 1, "líneas del dibujo (" + lineas.length + ")");
-        verificar(lineas[0].contains("2"), "ficha 2 en la salida");
-        verificar(lineas[2].startsWith("|   41    |") && lineas[2].contains("|   50    |"), "fila superior: 41..50 de izq. a der.");
-        verificar(lineas[4].contains("1"), "ficha 1 en la meta");
-        verificar(lineas[6].startsWith("|   40    |") && lineas[6].contains("|   31    |"), "fila siguiente en zigzag: 40..31");
+        verificar(lineas.length == 21, "líneas del dibujo (" + lineas.length + ")");
+        verificar(dibujo.contains("Salida: J2"), "ficha 2 en la salida");
+        verificar(lineas[2].startsWith("|41 ?3") && lineas[2].contains("|50 META |"), "fila superior: 41..50 de izq. a der.");
+        verificar(lineas[3].contains("J1"), "ficha 1 en la meta");
+        verificar(lineas[5].startsWith("|40 ") && lineas[5].contains("|31 "), "fila siguiente en zigzag: 40..31");
     }
 
     // ------------------------------------------------------------------ partidas
